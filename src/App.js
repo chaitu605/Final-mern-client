@@ -1,24 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import "./App.css";
+import { Switch, Route } from "react-router-dom";
+import Register from "./Components/Register";
+import Login from "./Components/Login";
+import Dashboard from "./Components/Dashboard";
+import PublicNavigation from "./Components/PublicNavigation";
+import Navigation from "./Components/Navigation";
+import Logout from "./Components/Logout";
+import EditNews from "./Components/EditNews";
+import NotFound from "./Components/NotFound404";
+import AddNews from "./Components/AddNews";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      {sessionStorage.getItem("user_info") == null ? (
+        <Navigation />
+      ) : (
+        <PublicNavigation />
+      )}
+      <Switch>
+        <Route exact path="/" component={Login} />
+        <Route exact path="/register" component={Register} />
+        <Route exact path="/dashboard" component={Dashboard} />
+        <Route exact path="/add" component={AddNews} />
+        <Route exact path="/dashboard/edit/:id" component={EditNews} />
+        <Route exact path="/logout" component={Logout} />
+        <Route component={NotFound} />
+      </Switch>
+    </React.Fragment>
   );
 }
 
