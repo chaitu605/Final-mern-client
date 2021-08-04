@@ -1,10 +1,18 @@
 import React from "react";
 import axios from "axios";
-import { useHistory, useParams } from "react-router";
+import { useHistory, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
 
 export default function EditNews() {
   const history = useHistory();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const { id } = useParams();
   const [editNews, setEditNews] = useState({
     title: "",
@@ -17,7 +25,7 @@ export default function EditNews() {
   useEffect(() => {
     const getNewsById = async () => {
       await axios
-        .get(`http://localhost:5000/api/news/${id}`)
+        .get(`https://final-server-mern.herokuapp.com/api/news/${id}`)
         .then((res) => {
           console.log(res.data);
           setEditNews({
@@ -32,20 +40,17 @@ export default function EditNews() {
         });
     };
     getNewsById();
-  }, []);
+  }, [id]);
 
   const onHandleInputChange = (e) => {
     const name = e.target.name;
     const value = e.target.value;
 
-    setEditNews({
-      [name]: value,
-    });
+    setEditNews({ ...editNews, [name]: value });
     console.log(setEditNews);
   };
 
-  const onSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = () => {
     setEditNews({ loading: true });
     const title = editNews.title;
     const news = editNews.news;
@@ -54,7 +59,7 @@ export default function EditNews() {
 
     const updateNews = async () => {
       await axios
-        .put(`http://localhost:5000/api/news/${id}`, {
+        .put(`https://final-server-mern.herokuapp.com/api/news/${id}`, {
           title,
           news,
           published,
@@ -77,93 +82,107 @@ export default function EditNews() {
 
   const button =
     editNews.loading === true ? (
-      <button class="spinner p-4"></button>
+      <button className="py-2 px-4 mx-40 border border-transparent text-sm font-medium rounded-md text-white bg-green-800">
+        Updating
+      </button>
     ) : (
       <button
-        onClick={onSubmit}
-        class="shadow bg-gray-500 focus:shadow-outline focus:outline-none text-white font-bold py-5 px-10 mx-40 my-5 rounded"
+        onClick={handleSubmit(onSubmit)}
+        className="py-2 px-4 mx-40 border border-transparent text-sm font-medium rounded-md text-white bg-green-800 hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
       >
-        Publish
+        Update
       </button>
     );
 
   return (
     <React.Fragment>
-      <div class="container mx-auto m-4 p-4 bg-white">
-        <form class="w-full max-w-lg mx-auto">
-          <div class="flex flex-wrap -mx-3 mb-6">
-            <div class="w-full px-2">
-              <label
-                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="grid-password"
-              >
-                Enter News Title
-              </label>
-              <input
-                name="title"
-                onChange={onHandleInputChange}
-                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-password"
-                type="text"
-                value={editNews.title}
-                placeholder="Enter News Title"
-              />
-            </div>
-            <div class="w-full px-2">
-              <label
-                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="grid-password"
-              >
-                Enter News
-              </label>
-              <textarea
-                name="news"
-                onChange={onHandleInputChange}
-                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-password"
-                type="text"
-                value={editNews.news}
-                placeholder="Enter News Title"
-              />
-            </div>
+      <div className="min-h-screen flex items-center bg-gray-300 justify-center py-12 px-6 sm:px-6 lg:px-8">
+        <form className="bg-green-200 shadow-md rounded px-10 pt-8 pb-10 mb-5">
+          <div className="mb-3">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              for="title"
+            >
+              Title
+            </label>
+            <input
+              name="title"
+              {...register("title", { required: true })}
+              onChangeCapture={onHandleInputChange}
+              className="shadow appearance-none border text-xs rounded w-full py-2 px-3 mr-12  text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="title"
+              type="text"
+              value={editNews.title}
+              placeholder="Add Title"
+            />
+            <p className="text-red-400 p-2">
+              {errors.title && "Title is required"}
+            </p>
           </div>
-          <div class="flex flex-wrap -mx-3 mb-2">
-            <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
-              <label
-                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="grid-city"
-              >
-                Author
-              </label>
-              <input
-                name="author"
-                onChange={onHandleInputChange}
-                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-city"
-                type="text"
-                value={editNews.author}
-                placeholder="Enter Author Name"
-              />
-            </div>
-            <div class="w-full md:w-1/2 px-2 mb-6 md:mb-0">
-              <label
-                class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                for="grid-zip"
-              >
-                Published on
-              </label>
-              <input
-                name="published"
-                onChange={onHandleInputChange}
-                class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                id="grid-zip"
-                type="text"
-                value={editNews.published}
-                placeholder="Enter Date"
-              />
-            </div>
+          <div className="mb-3">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              for="news"
+            >
+              News
+            </label>
+            <textarea
+              name="news"
+              {...register("news", { required: true })}
+              onChangeCapture={onHandleInputChange}
+              className="shadow appearance-none border rounded text-xs w-full py-2 px-3 mr-12 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="news"
+              type="text"
+              value={editNews.news}
+              placeholder="Add News"
+            />
+            <p className="text-red-400 p-2">
+              {errors.news && "News is required"}
+            </p>
           </div>
-          {button}
+          <div className="mb-3">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              for="news"
+            >
+              Published
+            </label>
+            <input
+              name="published"
+              {...register("published", { required: true })}
+              onChangeCapture={onHandleInputChange}
+              className="shadow appearance-none border rounded text-xs w-full py-2 px-3 mr-12 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="published"
+              type="text"
+              value={editNews.published}
+              placeholder="Add date"
+            />
+            <p className="text-red-400 p-2">
+              {errors.published && "Date is required"}
+            </p>
+          </div>
+          <div className="mb-3">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              for="news"
+            >
+              Author
+            </label>
+            <input
+              name="author"
+              {...register("author", { required: true })}
+              onChangeCapture={onHandleInputChange}
+              className="shadow appearance-none border rounded w-full text-xs py-2 px-3 mr-12 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+              id="author"
+              type="text"
+              value={editNews.author}
+              placeholder="Add author name"
+            />
+            <p className="text-red-400 p-2">
+              {errors.author && "Authorname is required"}
+            </p>
+          </div>
+          <div className="flex items-center justify-center">{button}</div>
         </form>
       </div>
     </React.Fragment>

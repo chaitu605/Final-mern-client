@@ -1,8 +1,9 @@
 import axios from "axios";
+import { apis } from "../constant";
 let data = null;
 export const registerUser = async (username, email, password, roles) => {
   await axios
-    .post("http://localhost:5000/api/auth/signup", {
+    .post(`${apis.register}`, {
       username,
       email,
       password,

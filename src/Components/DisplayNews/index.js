@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getNews } from "../../apis/getNews";
 import { deleteNews } from "../../apis/deleteNews";
-import { useHistory } from "react-router";
+import { useHistory } from "react-router-dom";
 import { useToasts } from "react-toast-notifications";
 
 export default function DisplayNews() {
@@ -19,8 +19,9 @@ export default function DisplayNews() {
   }, []);
 
   const { addToast } = useToasts();
+
   const history = useHistory();
-  const Delete = async (e) => {
+  const onSubmit = async (e) => {
     try {
       const data = await deleteNews(e);
       console.log(data);
@@ -44,46 +45,49 @@ export default function DisplayNews() {
   };
 
   return (
-    <div class=" pt-6 pb-12 mx-auto p-16 bg-gray-800 ">
-      <h2 class="text-center text-gray-100 font-serif  uppercase text-4xl xl:text-5xl">
+    <div className="bg-gray-300">
+      <h2 className="underline text-center text-black font-serif  uppercase text-4xl xl:text-5xl">
         Recent Articles
       </h2>
       {news != null && news.length ? (
         news.map((item, index) => (
-          <div class="max-w-5xl px-10 my-10 mx-40 py-6 bg-white rounded-lg shadow-md">
-            <div class="flex justify-between items-center">
-              <span class="font-light text-gray-600">{item.published}</span>
-              <div class="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500">
+          <div
+            key={index}
+            className="px-10 my-12 py-6 rounded shadow-xl bg-green-200 w-3/4 mx-auto"
+          >
+            <div className="flex justify-between items-center">
+              <span className="font-light text-gray-600">{item.published}</span>
+              <div className="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500">
                 <Link to={`/dashboard/edit/${item.id}`}>Edit</Link>
               </div>
             </div>
-            <div class="mt-2">
-              <p class="text-2xl text-gray-700 font-bold hover:text-gray-600">
+            <div className="mt-2">
+              <p className="text-2xl text-gray-700 font-bold hover:text-gray-600">
                 {item.title}
               </p>
-              <p class="mt-2 text-gray-600">{item.news}</p>
+              <p className="mt-2 text-gray-600">{item.news}</p>
             </div>
-            <div class="flex justify-between items-center mt-4">
+            <div className="flex justify-between items-center mt-4">
               <button
                 id={item.id}
-                onClick={Delete}
-                class="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500"
+                onClick={onSubmit}
+                className="px-2 py-1 bg-gray-600 text-gray-100 font-bold rounded hover:bg-gray-500"
               >
                 Delete
               </button>
-              <div class="flex items-center">
+              <div className="flex items-center">
                 <img
-                  class="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block"
+                  className="mx-4 w-10 h-10 object-cover rounded-full hidden sm:block"
                   src="https://cdn2.vectorstock.com/i/1000x1000/38/21/male-face-avatar-logo-template-pictograph-vector-11333821.jpg"
                   alt="avatar"
                 />
-                <h1 class="text-gray-700 font-bold">{item.author}</h1>
+                <h1 className="text-gray-700 font-bold">{item.author}</h1>
               </div>
             </div>
           </div>
         ))
       ) : (
-        <h2 class="text-left text-gray-100 font-serif  uppercase text-4xl xl:text-5xl">
+        <h2 className="text-left text-gray-100 font-serif  uppercase text-4xl xl:text-5xl">
           Loading...{" "}
         </h2>
       )}

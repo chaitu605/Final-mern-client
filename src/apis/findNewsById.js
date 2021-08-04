@@ -1,10 +1,11 @@
 import axios from "axios";
-import { apis } from "../constant";
+
 let data = null;
-export const getNews = async () => {
+export const findNewsById = async () => {
   await axios
-    .get(`${apis.get}`)
+    .get(`http://localhost:5000/api/news`)
     .then((res) => {
+      console.log(res.data);
       data = res.data;
     })
     .catch((err) => {

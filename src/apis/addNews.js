@@ -2,11 +2,14 @@ import axios from "axios";
 import { apis } from "../constant";
 
 let data = null;
-
-export const deleteNews = async (e) => {
-  const id = e.target.id;
+export const CreateNews = async (title, news, published, author) => {
   await axios
-    .delete(`${apis.delete}${id}`)
+    .post(`${apis.add}`, {
+      title,
+      news,
+      published,
+      author,
+    })
     .then((res) => {
       console.log(res);
       data = res;
@@ -14,6 +17,5 @@ export const deleteNews = async (e) => {
     .catch((err) => {
       console.log(err);
     });
-
   return data;
 };
